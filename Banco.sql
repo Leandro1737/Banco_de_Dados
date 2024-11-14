@@ -1,1 +1,8 @@
-create database Banco_Biblioteca
+create database Banco_Biblioteca;
+
+create table Livros(
+Titulo varchar (155),
+Autores varchar (90),
+Ano_Publicação varchar (10),
+Num_Exemplares int
+);
