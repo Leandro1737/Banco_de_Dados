@@ -6,3 +6,7 @@ Autores varchar (90),
 Ano_Publicação varchar (10),
 Num_Exemplares int
 );
+
+create table Emprestimo(
+Data_Emprestimo varchar (10)
+);
