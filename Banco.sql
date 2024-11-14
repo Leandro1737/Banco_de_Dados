@@ -10,3 +10,10 @@ Num_Exemplares int
 create table Emprestimo(
 Data_Emprestimo varchar (10)
 );
+
+create table Cliente (
+Id int,
+Nome varchar (100),
+Email varchar (255)
+
+);
