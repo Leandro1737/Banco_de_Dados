@@ -42,7 +42,7 @@ public class Cliente {
         Connection conexao = new Conexao().getConexao();
 
 
-        String sql = "INSERT INTO tb_aluno (nome, email, id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO tb_cliente (nome, email, id) VALUES (?, ?, ?)";
         try {
             PreparedStatement stmt;
             stmt = conexao.prepareStatement(sql);
@@ -58,6 +58,43 @@ public class Cliente {
             System.out.println(e.getMessage());
         }
     }
+    
+    /**
+     * Metodo que remove o cliente do banco de dados
+     */
+    
+    public void remover() {
+
+        String sql = "DELETE FROM tb_cliente WHERE id = ?";
+
+        PreparedStatement pstm = null;
+
+        try {
+            Connection conexao = new Conexao().getConexao();
+
+            pstm = conexao.prepareStatement(sql);
+
+            pstm.setInt(1, this.id);
+
+            pstm.execute();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+
+            try {
+                if (pstm != null) {
+
+                    pstm.close();
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
 
     //Metodo que percorre os clientes e printa o que diferente de vazio
     public static void listarClientes(Cliente[] clientes) {
