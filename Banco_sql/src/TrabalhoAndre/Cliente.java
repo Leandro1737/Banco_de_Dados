@@ -42,7 +42,7 @@ public class Cliente {
         Connection conexao = new Conexao().getConexao();
 
 
-        String sql = "INSERT INTO tb_cliente (nome, email, id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO tb_cliente (nome, email, id) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement stmt;
             stmt = conexao.prepareStatement(sql);
