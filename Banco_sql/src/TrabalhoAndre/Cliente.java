@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 
-
 /**
  *
  * @author Kaiky
@@ -34,13 +33,13 @@ public class Cliente {
     public int getID() {
         return id;
     }
-     /**
+
+    /**
      * Método que insere o cliente no banco de dados.
      */
     public void inserir() {
 
         Connection conexao = new Conexao().getConexao();
-
 
         String sql = "INSERT INTO tb_cliente (nome, email, id) VALUES (?, ?, ?)";
         try {
@@ -58,11 +57,10 @@ public class Cliente {
             System.out.println(e.getMessage());
         }
     }
-    
+
     /**
      * Metodo que remove o cliente do banco de dados
      */
-    
     public void remover() {
 
         String sql = "DELETE FROM tb_cliente WHERE id = ?";
@@ -95,6 +93,94 @@ public class Cliente {
         }
     }
 
+    /**
+     * Metodo para alterar o cliente no banco de dados
+     */
+    public void alterar() {
+
+        String sql = "UPDATE tb_cliente SET nome = ?, email = ?, id = ?"
+                + " WHERE id = ?";
+
+        PreparedStatement pstm = null;
+
+        try {
+            Connection conexao = new Conexao().getConexao();
+
+            pstm = conexao.prepareStatement(sql);
+
+            pstm.setString(1, this.nome);
+            pstm.setString(2, this.email);
+            pstm.setInt(3, this.id);
+
+            pstm.execute();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+
+            try {
+                if (pstm != null) {
+
+                    pstm.close();
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Metodo para listar no banco de dados
+     */
+
+    public void listar() {
+
+        String sql = "SELECT * FROM tb_cliente";
+
+        PreparedStatement pstm = null;
+        ResultSet rset = null;
+
+        try {
+            Connection conexao = new Conexao().getConexao();
+
+            pstm = conexao.prepareStatement(sql);
+
+            rset = pstm.executeQuery();
+
+            while (rset.next()) {
+
+                System.out.println(rset.getInt("id"));
+                System.out.println(rset.getString("nome"));
+                System.out.println(rset.getString("email"));       
+                System.out.println("---------------------------");
+
+            }
+        } catch (SQLException e) {
+
+            System.out.println(e.getMessage());
+
+        } finally {
+
+            try {
+
+                if (rset != null) {
+
+                    rset.close();
+                }
+
+                if (pstm != null) {
+
+                    pstm.close();
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+            }
+        }
+    }
 
     //Metodo que percorre os clientes e printa o que diferente de vazio
     public static void listarClientes(Cliente[] clientes) {
@@ -107,7 +193,7 @@ public class Cliente {
     }
 
     //Verifica se o idTeste é igual ao idParaRemover
-   //Caso ele encontre, ele substitui o valor do idTeste para o Id que ele deseja remover, move os outros clientes para a posição anterior no vetor a partir do cliente a ser removido e coloca o último espaço como vazio para adicionar um novo cliente
+    //Caso ele encontre, ele substitui o valor do idTeste para o Id que ele deseja remover, move os outros clientes para a posição anterior no vetor a partir do cliente a ser removido e coloca o último espaço como vazio para adicionar um novo cliente
     public static boolean removerCliente(Cliente[] clientes, int idParaRemover) {
         int idTeste = -1;
 
