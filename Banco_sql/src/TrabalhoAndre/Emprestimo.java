@@ -55,6 +55,36 @@ public class Emprestimo {
     }
 
     /**
+     * Remove o empréstimo do banco de dados.
+     */
+    public void remover() {
+        Connection conexao = new Conexao().getConexao();
+        String sql = "DELETE FROM tb_emprestimo WHERE livro_id = ? AND cliente_id = ?";
+
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, this.livro.getId()); // Supondo que Livros tenha o método getId()
+            stmt.setInt(2, this.cliente.getID()); // Supondo que Cliente tenha o método getID()
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Empréstimo removido com sucesso!");
+            } else {
+                System.out.println("Nenhum empréstimo encontrado para remover.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao remover empréstimo: " + e.getMessage());
+        } finally {
+            try {
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
      * Lista os empréstimos realizados.
      */
     public static void listaEmprestimos(Emprestimo[] emprestimos) {
@@ -63,7 +93,7 @@ public class Emprestimo {
         for (Emprestimo emprestimo : emprestimos) {
             if (emprestimo != null) {
                 System.out.println("Cliente: " + emprestimo.getCliente().getNome() + " - Livro: " 
-                                   + emprestimo.getLivro() + " - Data do Empréstimo: " 
+                                   + emprestimo.getLivro().titulo + " - Data do Empréstimo: " 
                                    + emprestimo.getDataEmprestimo());
                 encontrouEmprestimos = true;
             }
