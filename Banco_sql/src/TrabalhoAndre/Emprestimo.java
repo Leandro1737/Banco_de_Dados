@@ -3,6 +3,7 @@ package TrabalhoAndre;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 
 public class Emprestimo {
     private Livros livro;
@@ -62,8 +63,8 @@ public class Emprestimo {
         String sql = "DELETE FROM tb_emprestimo WHERE livro_id = ? AND cliente_id = ?";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setInt(1, this.livro.getId()); // Supondo que Livros tenha o método getId()
-            stmt.setInt(2, this.cliente.getID()); // Supondo que Cliente tenha o método getID()
+            stmt.setInt(1, this.livro.getId());
+            stmt.setInt(2, this.cliente.getID());
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -85,42 +86,68 @@ public class Emprestimo {
     }
 
     /**
-     * Lista os empréstimos realizados.
+     * Atualiza os dados de um empréstimo no banco de dados.
      */
-    public static void listaEmprestimos(Emprestimo[] emprestimos) {
-        System.out.println("Empréstimos realizados:");
-        boolean encontrouEmprestimos = false;
-        for (Emprestimo emprestimo : emprestimos) {
-            if (emprestimo != null) {
-                System.out.println("Cliente: " + emprestimo.getCliente().getNome() + " - Livro: " 
-                                   + emprestimo.getLivro().titulo + " - Data do Empréstimo: " 
-                                   + emprestimo.getDataEmprestimo());
-                encontrouEmprestimos = true;
-            }
-        }
+    public void alterar(String novaDataEmprestimo) {
+        Connection conexao = new Conexao().getConexao();
+        String sql = "UPDATE tb_emprestimo SET dataEmprestimo = ? WHERE livro_id = ? AND cliente_id = ?";
 
-        if (!encontrouEmprestimos) {
-            System.out.println("Nenhum empréstimo realizado.");
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setString(1, novaDataEmprestimo);
+            stmt.setInt(2, this.livro.getId());
+            stmt.setInt(3, this.cliente.getID());
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                this.dataEmprestimo = novaDataEmprestimo;
+                System.out.println("Empréstimo atualizado com sucesso!");
+            } else {
+                System.out.println("Nenhum empréstimo encontrado para atualizar.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar empréstimo: " + e.getMessage());
+        } finally {
+            try {
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Erro ao fechar conexão: " + e.getMessage());
+            }
         }
     }
 
     /**
-     * Realiza a devolução do livro.
+     * Lista todos os empréstimos registrados no banco de dados.
      */
-    public void devolver() {
-        livro.devolverExemplar(); // Supondo que Livros tenha um método devolverExemplar()
-        System.out.println("Livro devolvido com sucesso!");
-    }
+    public static void listar() {
+        Connection conexao = new Conexao().getConexao();
+        String sql = "SELECT e.dataEmprestimo, c.nome AS cliente, l.titulo AS livro "
+                   + "FROM tb_emprestimo e "
+                   + "JOIN tb_cliente c ON e.cliente_id = c.id "
+                   + "JOIN tb_livros l ON e.livro_id = l.id";
 
-    /**
-     * Verifica se um cliente possui empréstimo cadastrado.
-     */
-    public static boolean empCadastrado(Emprestimo[] emprestimos, int clienteId) {
-        for (Emprestimo emprestimo : emprestimos) {
-            if (emprestimo != null && emprestimo.getCliente().getID() == clienteId) {
-                return true;
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            System.out.println("Lista de Empréstimos:");
+            while (rs.next()) {
+                String dataEmprestimo = rs.getString("dataEmprestimo");
+                String cliente = rs.getString("cliente");
+                String livro = rs.getString("livro");
+
+                System.out.println("Cliente: " + cliente + " | Livro: " + livro + " | Data: " + dataEmprestimo);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar empréstimos: " + e.getMessage());
+        } finally {
+            try {
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Erro ao fechar conexão: " + e.getMessage());
             }
         }
-        return false;
     }
 }
