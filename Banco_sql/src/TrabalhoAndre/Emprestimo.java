@@ -1,5 +1,11 @@
 package TrabalhoAndre;
 
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+
 public class Emprestimo {
     private Livros livro;
     private String dataEmprestimo;
@@ -21,6 +27,29 @@ public class Emprestimo {
 
     public Cliente getCliente() {
         return cliente;
+    }
+    
+    public void inserir() {
+
+        Connection conexao = new Conexao().getConexao();
+
+
+        String sql = "INSERT INTO tb_emprestimo (livro, dataEmprestimo, cliente) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement stmt;
+            stmt = conexao.prepareStatement(sql);
+            stmt.setLivros(1, this.livro);
+            stmt.setString(2, this.dataEmprestimo);
+            stmt.setCliente(3, this.cliente);
+
+
+            stmt.execute();
+            stmt.close();
+
+            conexao.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
     //Metodo que percorre os emprestimos e printa o que é diferente de vazio
     public static void listaEmprestimos(Emprestimo[] emprestimos) {
