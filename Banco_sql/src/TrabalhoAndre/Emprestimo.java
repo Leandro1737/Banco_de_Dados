@@ -1,15 +1,13 @@
 package TrabalhoAndre;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.ResultSet;
 
 public class Emprestimo {
     private Livros livro;
     private String dataEmprestimo;
-    private Cliente cliente;  
+    private Cliente cliente;
 
     public Emprestimo(Livros livro, String dataEmprestimo, Cliente cliente) {
         this.livro = livro;
@@ -28,38 +26,45 @@ public class Emprestimo {
     public Cliente getCliente() {
         return cliente;
     }
-    
+
+    /**
+     * Insere o empréstimo no banco de dados.
+     */
     public void inserir() {
-
         Connection conexao = new Conexao().getConexao();
+        String sql = "INSERT INTO tb_emprestimo (livro_id, dataEmprestimo, cliente_id) VALUES (?, ?, ?)";
 
-
-        String sql = "INSERT INTO tb_emprestimo (livro, dataEmprestimo, cliente) VALUES (?, ?, ?)";
-        try {
-            PreparedStatement stmt;
-            stmt = conexao.prepareStatement(sql);
-            stmt.setLivros(1, this.livro);
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, this.livro.getId()); // Supondo que Livros tenha o método getId()
             stmt.setString(2, this.dataEmprestimo);
-            stmt.setCliente(3, this.cliente);
-
+            stmt.setInt(3, this.cliente.getID()); // Supondo que Cliente tenha o método getID()
 
             stmt.execute();
-            stmt.close();
-
-            conexao.close();
+            System.out.println("Empréstimo registrado com sucesso!");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.err.println("Erro ao inserir empréstimo: " + e.getMessage());
+        } finally {
+            try {
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Erro ao fechar conexão: " + e.getMessage());
+            }
         }
     }
-    //Metodo que percorre os emprestimos e printa o que é diferente de vazio
+
+    /**
+     * Lista os empréstimos realizados.
+     */
     public static void listaEmprestimos(Emprestimo[] emprestimos) {
         System.out.println("Empréstimos realizados:");
         boolean encontrouEmprestimos = false;
         for (Emprestimo emprestimo : emprestimos) {
             if (emprestimo != null) {
                 System.out.println("Cliente: " + emprestimo.getCliente().getNome() + " - Livro: " 
-                    + emprestimo.getLivro().titulo + " - Data do Empréstimo: " 
-                    + emprestimo.getDataEmprestimo());
+                                   + emprestimo.getLivro() + " - Data do Empréstimo: " 
+                                   + emprestimo.getDataEmprestimo());
                 encontrouEmprestimos = true;
             }
         }
@@ -68,12 +73,18 @@ public class Emprestimo {
             System.out.println("Nenhum empréstimo realizado.");
         }
     }
-    // executa o metodo devolver do livro e printa
+
+    /**
+     * Realiza a devolução do livro.
+     */
     public void devolver() {
-        livro.devolverExemplar();
+        livro.devolverExemplar(); // Supondo que Livros tenha um método devolverExemplar()
         System.out.println("Livro devolvido com sucesso!");
     }
-    // percorre os emprestimos e o que for diferente de vazio e igual ao id do cliente informado ele da como true
+
+    /**
+     * Verifica se um cliente possui empréstimo cadastrado.
+     */
     public static boolean empCadastrado(Emprestimo[] emprestimos, int clienteId) {
         for (Emprestimo emprestimo : emprestimos) {
             if (emprestimo != null && emprestimo.getCliente().getID() == clienteId) {
