@@ -1,4 +1,4 @@
-package Trabalho_ldp2;
+package TrabalhoAndre;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -258,10 +258,6 @@ public class App {
                             System.out.println("Opção inválida");
                         }
                         break;
-                    case 6: // sair
-                        Salvamentos.salvarDados(clientes, livros, emprestimos);
-                        break;
-
                 }
             } while (opcao != 6);
 
