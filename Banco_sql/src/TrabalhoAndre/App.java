@@ -26,7 +26,7 @@ public class App {
 
                 boolean entrada = false;
                 while (!entrada) {
-                    try { // impede o usuario de digitar um caracter
+                    try {
                         opcao = scanner.nextInt();
                         scanner.nextLine();
                         if (opcao < 1 || opcao > 6) {
@@ -42,7 +42,7 @@ public class App {
 
                 switch (opcao) {
 
-                    case 1: //cadastro livro
+                    case 1: // Cadastro de Livro
                         if (contadorLivro < livros.length) {
                             System.out.println("Informe o título do livro:");
                             String titulo = scanner.nextLine();
@@ -63,7 +63,7 @@ public class App {
                                     validarExemplares = true;
                                 } catch (InputMismatchException e) {
                                     System.out.println("Entrada inválida. Por favor, digite um número inteiro para o número de exemplares.");
-                                    scanner.nextLine(); // Limpa a entrada inválida
+                                    scanner.nextLine();
                                 }
                             }
 
@@ -71,20 +71,10 @@ public class App {
                             contadorLivro++;
                         } else {
                             System.out.println("Limite de livros atingido.");
-                            System.out.println("Deseja apagar algum livro? S ou N");
-                            String resposta = scanner.nextLine();
-                            if (resposta.equalsIgnoreCase("S") || resposta.equalsIgnoreCase("sim")) {
-                                Livros.listarLivros(livros);
-                                System.out.println("Digite o título do livro que deseja remover:");
-                                String tituloParaRemover = scanner.nextLine();
-                                if (Livros.removerLivro(livros, tituloParaRemover)) {
-                                    contadorLivro--;
-                                }
-                            }
                         }
                         break;
 
-                    case 2: //cadastro cliente
+                    case 2: // Cadastro de Cliente
                         if (contadorCliente < clientes.length) {
                             System.out.println("Informe o nome do cliente:");
                             String nome = scanner.nextLine();
@@ -97,55 +87,29 @@ public class App {
                             proximoID++;
                         } else {
                             System.out.println("Limite de clientes atingido.");
-                            System.out.println("Deseja apagar algum cliente? S ou N");
-                            String resposta = scanner.nextLine();
-                            if (resposta.equalsIgnoreCase("S") || resposta.equalsIgnoreCase("sim")) {
-                                Cliente.listarClientes(clientes);
-
-                                int idParaRemover = 0;
-                                boolean validarId = false;
-                                while (!validarId) {
-                                    try { // impede o usuario de digitar um caracter
-                                        System.out.println("Digite o ID do cliente que deseja remover:");
-                                        idParaRemover = scanner.nextInt();
-                                        scanner.nextLine();
-                                        validarId = true;
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Entrada inválida. Por favor, digite um número inteiro para o ID do cliente.");
-                                        scanner.nextLine(); // Limpa a entrada inválida
-                                    }
-                                }
-
-                                if (Cliente.removerCliente(clientes, idParaRemover)) {
-                                    contadorCliente--;
-                                    System.out.println("Cliente removido");
-                                } else {
-                                    System.out.println("Não foi encontrado um cliente com esses dados.");
-                                }
-                            }
                         }
                         break;
 
-                    case 3: //realizar emprestimo
+                    case 3: // Realizar Empréstimo
                         if (contadorEmprestimo < emprestimos.length) {
                             int clienteId = 0;
                             boolean validarClienteId = false;
                             while (!validarClienteId) {
-                                try { // impede o usuario de digitar um caracter
+                                try {
                                     System.out.println("Informe o ID do cliente:");
                                     clienteId = scanner.nextInt();
                                     scanner.nextLine();
                                     validarClienteId = true;
                                 } catch (InputMismatchException e) {
                                     System.out.println("Entrada inválida. Por favor, digite um número inteiro para o ID do cliente.");
-                                    scanner.nextLine(); // Limpa a entrada inválida
+                                    scanner.nextLine();
                                 }
                             }
 
+                            // Verifica se o cliente existe
                             if (clienteId > 0 && clienteId <= clientes.length && clientes[clienteId - 1] != null) {
                                 Cliente cliente = clientes[clienteId - 1];
 
-                                // Verificar se o cliente já possui um empréstimo ativo
                                 if (Emprestimo.empCadastrado(emprestimos, clienteId)) {
                                     System.out.println("Cliente já possui um empréstimo, devolva o livro para pegar outro");
                                     break;
@@ -156,7 +120,7 @@ public class App {
 
                                 Livros livro = null;
                                 for (Livros l : livros) {
-                                    if (l != null && l.titulo.equalsIgnoreCase(tituloLivro)) {
+                                    if (l != null && l.getTitulo().equalsIgnoreCase(tituloLivro)) {
                                         livro = l;
                                         break;
                                     }
@@ -183,52 +147,18 @@ public class App {
                         }
                         break;
 
-                    case 4: //devoluçao
+                    case 4: // Realizar Devolução
                         System.out.println("Informe o título do livro para devolução:");
-                        String tituloLivro = scanner.nextLine();
+                        String tituloDevolucao = scanner.nextLine();
 
-                        System.out.println("Informe o nome do cliente que pegou o livro:");
-                        String nomeCliente = scanner.nextLine();
+                        System.out.println("Informe o ID do cliente que pegou o livro:");
+                        int clienteIdDevolucao = scanner.nextInt();
+                        scanner.nextLine();
 
-                        System.out.println("Informe a data do empréstimo:");
-                        String dataEmprestimo = scanner.nextLine();
-
-                        Livros livro = null;
-                        for (Livros l : livros) {
-                            if (l != null && l.titulo.equalsIgnoreCase(tituloLivro)) {
-                                livro = l;
-                                break;
-                            }
-                        }
-
-                        if (livro != null) {
-                            boolean emprestimoEncontrado = false;
-                            for (int i = 0; i < emprestimos.length; i++) {
-                                if (emprestimos[i] != null
-                                        && emprestimos[i].getLivro().titulo.equalsIgnoreCase(tituloLivro)
-                                        && emprestimos[i].getCliente().getNome().equalsIgnoreCase(nomeCliente)
-                                        && emprestimos[i].getDataEmprestimo().equals(dataEmprestimo)) {
-
-                                    livro.devolverExemplar();
-                                    System.out.println("Livro devolvido");
-
-                                    emprestimos[i] = null;
-                                    contadorEmprestimo--;
-                                    emprestimoEncontrado = true;
-                                    System.out.println("Empréstimo removido");
-                                    break;
-                                }
-                            }
-
-                            if (!emprestimoEncontrado) {
-                                System.out.println("Empréstimo não encontrado para esse cliente, livro e data.");
-                            }
-                        } else {
-                            System.out.println("Livro não encontrado.");
-                        }
+                        Emprestimo.devolverLivro(emprestimos, livros, tituloDevolucao, clienteIdDevolucao);
                         break;
 
-                    case 5: // verificação de clientes, livros ou empréstimos cadastrados
+                    case 5: // Verificar clientes, livros ou empréstimos cadastrados
                         System.out.println("Digite " + "\n"
                         + "1 para visualizar clientes cadastrados" + "\n"
                         + "2 para visualizar livros cadastrados" + "\n"
@@ -258,6 +188,11 @@ public class App {
                             System.out.println("Opção inválida");
                         }
                         break;
+
+                    case 6: // Sair
+                        System.out.println("Saindo...");
+                        break;
+
                 }
             } while (opcao != 6);
 

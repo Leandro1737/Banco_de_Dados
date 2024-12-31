@@ -1,153 +1,60 @@
 package TrabalhoAndre;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-
 public class Emprestimo {
     private Livros livro;
-    private String dataEmprestimo;
     private Cliente cliente;
+    private String dataEmprestimo;
 
+    // Construtor
     public Emprestimo(Livros livro, String dataEmprestimo, Cliente cliente) {
         this.livro = livro;
         this.dataEmprestimo = dataEmprestimo;
         this.cliente = cliente;
     }
 
+    // Métodos de acesso
     public Livros getLivro() {
         return livro;
-    }
-
-    public String getDataEmprestimo() {
-        return dataEmprestimo;
     }
 
     public Cliente getCliente() {
         return cliente;
     }
 
-    /**
-     * Insere o empréstimo no banco de dados.
-     */
-    public void inserir() {
-        Connection conexao = new Conexao().getConexao();
-        String sql = "INSERT INTO tb_emprestimo (livro_id, dataEmprestimo, cliente_id) VALUES (?, ?, ?)";
+    public String getDataEmprestimo() {
+        return dataEmprestimo;
+    }
 
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setInt(1, this.livro.getId()); // Supondo que Livros tenha o método getId()
-            stmt.setString(2, this.dataEmprestimo);
-            stmt.setInt(3, this.cliente.getID()); // Supondo que Cliente tenha o método getID()
+    // Verifica se o cliente já possui um empréstimo
+    public static boolean empCadastrado(Emprestimo[] emprestimos, int clienteId) {
+        for (Emprestimo emprestimo : emprestimos) {
+            if (emprestimo != null && emprestimo.getCliente().getId() == clienteId) {
+                return true;  // Cliente já tem um empréstimo ativo
+            }
+        }
+        return false; // Cliente não possui empréstimo ativo
+    }
 
-            stmt.execute();
-            System.out.println("Empréstimo registrado com sucesso!");
-        } catch (SQLException e) {
-            System.err.println("Erro ao inserir empréstimo: " + e.getMessage());
-        } finally {
-            try {
-                if (conexao != null) {
-                    conexao.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Erro ao fechar conexão: " + e.getMessage());
+    // Lista todos os empréstimos
+    public static void listaEmprestimos(Emprestimo[] emprestimos) {
+        System.out.println("Empréstimos cadastrados:");
+        for (Emprestimo emprestimo : emprestimos) {
+            if (emprestimo != null) {
+                System.out.println("Livro: " + emprestimo.getLivro().getTitulo() + ", Cliente: " + emprestimo.getCliente().getNome() + ", Data: " + emprestimo.getDataEmprestimo());
             }
         }
     }
 
-    /**
-     * Remove o empréstimo do banco de dados.
-     */
-    public void remover() {
-        Connection conexao = new Conexao().getConexao();
-        String sql = "DELETE FROM tb_emprestimo WHERE livro_id = ? AND cliente_id = ?";
-
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setInt(1, this.livro.getId());
-            stmt.setInt(2, this.cliente.getID());
-
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Empréstimo removido com sucesso!");
-            } else {
-                System.out.println("Nenhum empréstimo encontrado para remover.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Erro ao remover empréstimo: " + e.getMessage());
-        } finally {
-            try {
-                if (conexao != null) {
-                    conexao.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Erro ao fechar conexão: " + e.getMessage());
+    // Método para devolver um livro
+    public static void devolverLivro(Emprestimo[] emprestimos, Livros[] livros, String titulo, int clienteId) {
+        for (int i = 0; i < emprestimos.length; i++) {
+            if (emprestimos[i] != null && emprestimos[i].getLivro().getTitulo().equalsIgnoreCase(titulo) && emprestimos[i].getCliente().getId() == clienteId) {
+                emprestimos[i].getLivro().devolverExemplar(); // Devolve o exemplar
+                emprestimos[i] = null; // Remove o empréstimo
+                System.out.println("Livro devolvido com sucesso.");
+                return;
             }
         }
-    }
-
-    /**
-     * Atualiza os dados de um empréstimo no banco de dados.
-     */
-    public void alterar(String novaDataEmprestimo) {
-        Connection conexao = new Conexao().getConexao();
-        String sql = "UPDATE tb_emprestimo SET dataEmprestimo = ? WHERE livro_id = ? AND cliente_id = ?";
-
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setString(1, novaDataEmprestimo);
-            stmt.setInt(2, this.livro.getId());
-            stmt.setInt(3, this.cliente.getID());
-
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                this.dataEmprestimo = novaDataEmprestimo;
-                System.out.println("Empréstimo atualizado com sucesso!");
-            } else {
-                System.out.println("Nenhum empréstimo encontrado para atualizar.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Erro ao atualizar empréstimo: " + e.getMessage());
-        } finally {
-            try {
-                if (conexao != null) {
-                    conexao.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Erro ao fechar conexão: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Lista todos os empréstimos registrados no banco de dados.
-     */
-    public static void listar() {
-        Connection conexao = new Conexao().getConexao();
-        String sql = "SELECT e.dataEmprestimo, c.nome AS cliente, l.titulo AS livro "
-                   + "FROM tb_emprestimo e "
-                   + "JOIN tb_cliente c ON e.cliente_id = c.id "
-                   + "JOIN tb_livros l ON e.livro_id = l.id";
-
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-
-            System.out.println("Lista de Empréstimos:");
-            while (rs.next()) {
-                String dataEmprestimo = rs.getString("dataEmprestimo");
-                String cliente = rs.getString("cliente");
-                String livro = rs.getString("livro");
-
-                System.out.println("Cliente: " + cliente + " | Livro: " + livro + " | Data: " + dataEmprestimo);
-            }
-        } catch (SQLException e) {
-            System.err.println("Erro ao listar empréstimos: " + e.getMessage());
-        } finally {
-            try {
-                if (conexao != null) {
-                    conexao.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Erro ao fechar conexão: " + e.getMessage());
-            }
-        }
+        System.out.println("Empréstimo não encontrado.");
     }
 }

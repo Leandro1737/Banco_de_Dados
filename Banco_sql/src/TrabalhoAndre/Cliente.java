@@ -1,27 +1,18 @@
 package TrabalhoAndre;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-
-/**
- *
- * @author Kaiky
- */
 public class Cliente {
-
     private String nome;
     private String email;
     private int id;
 
+    // Construtor
     public Cliente(String nome, String email, int id) {
         this.nome = nome;
         this.email = email;
         this.id = id;
-
     }
 
+    // Métodos de acesso
     public String getNome() {
         return nome;
     }
@@ -30,188 +21,17 @@ public class Cliente {
         return email;
     }
 
-    public int getID() {
+    public int getId() {
         return id;
     }
 
-    /**
-     * Método que insere o cliente no banco de dados.
-     */
-    public void inserir() {
-
-        Connection conexao = new Conexao().getConexao();
-
-        String sql = "INSERT INTO tb_cliente (nome, email, id) VALUES (?, ?, ?)";
-        try {
-            PreparedStatement stmt;
-            stmt = conexao.prepareStatement(sql);
-            stmt.setString(1, this.nome);
-            stmt.setString(2, this.email);
-            stmt.setInt(3, this.id);
-
-            stmt.execute();
-            stmt.close();
-
-            conexao.close();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     * Metodo que remove o cliente do banco de dados
-     */
-    public void remover() {
-
-        String sql = "DELETE FROM tb_cliente WHERE id = ?";
-
-        PreparedStatement pstm = null;
-
-        try {
-            Connection conexao = new Conexao().getConexao();
-
-            pstm = conexao.prepareStatement(sql);
-
-            pstm.setInt(1, this.id);
-
-            pstm.execute();
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-
-            try {
-                if (pstm != null) {
-
-                    pstm.close();
-                }
-
-            } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Metodo para alterar o cliente no banco de dados
-     */
-    public void alterar() {
-
-        String sql = "UPDATE tb_cliente SET nome = ?, email = ?, id = ?"
-                + " WHERE id = ?";
-
-        PreparedStatement pstm = null;
-
-        try {
-            Connection conexao = new Conexao().getConexao();
-
-            pstm = conexao.prepareStatement(sql);
-
-            pstm.setString(1, this.nome);
-            pstm.setString(2, this.email);
-            pstm.setInt(3, this.id);
-
-            pstm.execute();
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-
-            try {
-                if (pstm != null) {
-
-                    pstm.close();
-                }
-
-            } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-    
-    /**
-     * Metodo para listar no banco de dados
-     */
-
-    public void listar() {
-
-        String sql = "SELECT * FROM tb_cliente";
-
-        PreparedStatement pstm = null;
-        ResultSet rset = null;
-
-        try {
-            Connection conexao = new Conexao().getConexao();
-
-            pstm = conexao.prepareStatement(sql);
-
-            rset = pstm.executeQuery();
-
-            while (rset.next()) {
-
-                System.out.println(rset.getInt("id"));
-                System.out.println(rset.getString("nome"));
-                System.out.println(rset.getString("email"));       
-                System.out.println("---------------------------");
-
-            }
-        } catch (SQLException e) {
-
-            System.out.println(e.getMessage());
-
-        } finally {
-
-            try {
-
-                if (rset != null) {
-
-                    rset.close();
-                }
-
-                if (pstm != null) {
-
-                    pstm.close();
-                }
-
-            } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    //Metodo que percorre os clientes e printa o que diferente de vazio
+    // Lista os clientes cadastrados
     public static void listarClientes(Cliente[] clientes) {
         System.out.println("Clientes cadastrados:");
         for (Cliente cliente : clientes) {
             if (cliente != null) {
-                System.out.println("ID: " + cliente.getID() + " - Nome: " + cliente.getNome());
+                System.out.println("ID: " + cliente.getId() + ", Nome: " + cliente.getNome() + ", Email: " + cliente.getEmail());
             }
         }
-    }
-
-    //Verifica se o idTeste é igual ao idParaRemover
-    //Caso ele encontre, ele substitui o valor do idTeste para o Id que ele deseja remover, move os outros clientes para a posição anterior no vetor a partir do cliente a ser removido e coloca o último espaço como vazio para adicionar um novo cliente
-    public static boolean removerCliente(Cliente[] clientes, int idParaRemover) {
-        int idTeste = -1;
-
-        for (int i = 0; i < clientes.length; i++) {
-            if (clientes[i] != null && clientes[i].getID() == idParaRemover) {
-                idTeste = i;
-                break;
-            }
-        }
-        if (idTeste == -1) {
-            System.out.println("Cliente não encontrado.");
-            return false;
-        }
-        for (int j = idTeste; j < clientes.length - 1; j++) {
-            clientes[j] = clientes[j + 1];
-        }
-        clientes[clientes.length - 1] = null;
-        System.out.println("Cliente removido");
-        return true;
     }
 }
