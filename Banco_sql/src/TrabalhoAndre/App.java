@@ -9,7 +9,7 @@ public class App {
         int opcao = 0;
 
         do {
-            System.out.println("=== Sistema de Gerenciamento da Biblioteca ===");
+            System.out.println("Sistema de Gerenciamento da Biblioteca");
             System.out.println("1. Cadastrar cliente");
             System.out.println("2. Listar clientes");
             System.out.println("3. Editar cliente");
