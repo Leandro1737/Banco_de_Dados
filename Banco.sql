@@ -14,10 +14,11 @@ CREATE TABLE IF NOT EXISTS livros (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(255) NOT NULL,
     autores VARCHAR(255) NOT NULL,
-    ano_publicacao VARCHAR(4) NOT NULL,
+    ano_publicacao VARCHAR(4),
     num_exemplares INT NOT NULL,
     exemplares_disponiveis INT NOT NULL
 );
+
 
 -- Tabela de Empréstimos
 CREATE TABLE IF NOT EXISTS emprestimos (

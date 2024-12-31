@@ -3,6 +3,7 @@ package TrabalhoAndre;
 import java.util.Scanner;
 
 public class App {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int opcao = 0;
@@ -124,12 +125,33 @@ public class App {
                         Emprestimo.atualizarEmprestimo(idClienteUpdate, idLivroUpdate, novaDataEmprestimo);
                         break;
 
-                    case 12:
-                        System.out.print("Digite o ID do cliente: ");
-                        int idClienteDelEmp = scanner.nextInt();
-                        System.out.print("Digite o ID do livro: ");
-                        int idLivroDelEmp = scanner.nextInt();
-                        Emprestimo.apagarEmprestimo(idClienteDelEmp, idLivroDelEmp);
+                    case 12:  // Devolução de Livro
+                        try {
+                            System.out.print("Digite o ID do cliente: ");
+                            int idClienteDelEmp = scanner.nextInt();
+                            System.out.print("Digite o ID do livro: ");
+                            int idLivroDelEmp = scanner.nextInt();
+                            scanner.nextLine(); // Limpar o buffer do scanner
+
+                            // Buscar livro e cliente no banco de dados
+                            Livros livros = Livros.buscarLivroPorId(idLivroDelEmp); // Chama o método estático para buscar o livro
+                            Cliente cliente = Cliente.buscarClientePorId(idClienteDelEmp); // Chama o método estático para buscar o cliente
+
+                            if (livros == null) {
+                                System.out.println("Livro não encontrado.");
+                                break;
+                            }
+
+                            if (cliente == null) {
+                                System.out.println("Cliente não encontrado.");
+                                break;
+                            }
+
+                            // Registrar a devolução
+                            Emprestimo.registrarDevolucao(livros, cliente); // Chama o método de devolução
+                        } catch (Exception e) {
+                            System.out.println("Erro ao registrar devolução: " + e.getMessage());
+                        }
                         break;
 
                     case 0:

@@ -31,10 +31,8 @@ public class Cliente {
     // Lista os clientes cadastrados no banco de dados
     public static void listarClientes() {
         String query = "SELECT * FROM clientes";
-        try (Connection connection = Conexao.getConnection();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-            
+        try (Connection connection = Conexao.getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+
             System.out.println("Clientes cadastrados:");
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -50,8 +48,7 @@ public class Cliente {
     // Cadastrar cliente no banco de dados
     public static void cadastrarCliente(String nome, String email) {
         String query = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
-        try (Connection connection = Conexao.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.executeUpdate();
@@ -64,8 +61,7 @@ public class Cliente {
     // Editar cliente no banco de dados
     public static void editarCliente(int id, String novoNome, String novoEmail) {
         String query = "UPDATE clientes SET nome = ?, email = ? WHERE id = ?";
-        try (Connection connection = Conexao.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, novoNome);
             stmt.setString(2, novoEmail);
             stmt.setInt(3, id);
@@ -83,8 +79,7 @@ public class Cliente {
     // Apagar cliente do banco de dados
     public static void apagarCliente(int id) {
         String query = "DELETE FROM clientes WHERE id = ?";
-        try (Connection connection = Conexao.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             int rowsDeleted = stmt.executeUpdate();
             if (rowsDeleted > 0) {
@@ -96,4 +91,22 @@ public class Cliente {
             System.out.println("Erro ao apagar cliente: " + e.getMessage());
         }
     }
+    // Método para buscar cliente por ID no banco
+
+    public static Cliente buscarClientePorId(int clienteId) {
+        String query = "SELECT * FROM clientes WHERE id = ?";
+        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, clienteId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String nome = rs.getString("nome");
+                String email = rs.getString("email");
+                return new Cliente(nome, email, clienteId);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar cliente: " + e.getMessage());
+        }
+        return null;  // Retorna null se o cliente não for encontrado
+    }
+
 }
