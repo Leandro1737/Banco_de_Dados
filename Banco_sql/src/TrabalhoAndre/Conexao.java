@@ -6,17 +6,11 @@ import java.sql.SQLException;
 
 public class Conexao {
 
-    public static final String SERVIDOR = "jdbc:mysql://localhost:3306/Banco_Biblioteca";
-    public static final String USUARIO = "root";
-    public static final String SENHA = "leandromaciel";
-
-    public Connection getConexao() {
-        try {
-            return DriverManager.getConnection(SERVIDOR, USUARIO, SENHA);
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
+    // Método para obter a conexão com o banco de dados
+    public static Connection getConnection() throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/biblioteca";  // URL do banco de dados
+        String user = "root";  // Usuário do banco de dados
+        String password = "123456789";  // Senha do banco de dados
+        return DriverManager.getConnection(url, user, password);
     }
 }

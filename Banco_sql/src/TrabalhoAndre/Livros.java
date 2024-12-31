@@ -3,7 +3,7 @@ package TrabalhoAndre;
 import java.sql.*;
 
 public class Livros {
-    private int id;  // ID do livro (adicionando o identificador único)
+    private int id;
     private String titulo;
     private String autores;
     private String anoPublicacao;
@@ -17,7 +17,7 @@ public class Livros {
         this.autores = autores;
         this.anoPublicacao = anoPublicacao;
         this.numExemplares = numExemplares;
-        this.exemplaresDisponiveis = numExemplares;  // Inicializa com o número total de exemplares
+        this.exemplaresDisponiveis = numExemplares;
     }
 
     // Métodos de acesso
@@ -49,9 +49,9 @@ public class Livros {
     public boolean emprestarExemplar() {
         if (exemplaresDisponiveis > 0) {
             exemplaresDisponiveis--;
-            return true;  // Empréstimo bem-sucedido
+            return true;
         }
-        return false;  // Não há exemplares disponíveis
+        return false;
     }
 
     public void devolverExemplar() {
@@ -63,7 +63,7 @@ public class Livros {
     // Método estático para listar os livros
     public static void listarLivros() {
         String query = "SELECT id, titulo, autores, ano_publicacao, exemplares_disponiveis FROM livros";
-        try (Connection connection = Emprestimo.getConnection();
+        try (Connection connection = Conexao.getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             
@@ -84,7 +84,7 @@ public class Livros {
     // Método para cadastrar livro no banco de dados
     public static void cadastrarLivro(Livros livro) {
         String query = "INSERT INTO livros (titulo, autores, ano_publicacao, num_exemplares, exemplares_disponiveis) VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = Emprestimo.getConnection();
+        try (Connection connection = Conexao.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutores());
@@ -101,13 +101,13 @@ public class Livros {
     // Método para atualizar livro no banco de dados
     public static void atualizarLivro(int id, String titulo, String autores, String anoPublicacao, int numExemplares) {
         String query = "UPDATE livros SET titulo = ?, autores = ?, ano_publicacao = ?, num_exemplares = ?, exemplares_disponiveis = ? WHERE id = ?";
-        try (Connection connection = Emprestimo.getConnection();
+        try (Connection connection = Conexao.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, titulo);
             stmt.setString(2, autores);
             stmt.setString(3, anoPublicacao);
             stmt.setInt(4, numExemplares);
-            stmt.setInt(5, numExemplares);  // Inicializa os exemplares disponíveis com o número total
+            stmt.setInt(5, numExemplares);
             stmt.setInt(6, id);
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated > 0) {
@@ -123,7 +123,7 @@ public class Livros {
     // Método para apagar livro do banco de dados
     public static void apagarLivro(int id) {
         String query = "DELETE FROM livros WHERE id = ?";
-        try (Connection connection = Emprestimo.getConnection();
+        try (Connection connection = Conexao.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             int rowsDeleted = stmt.executeUpdate();

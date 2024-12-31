@@ -1,7 +1,6 @@
 package TrabalhoAndre;
 
 import java.sql.*;
-import java.util.Scanner;
 
 public class Cliente {
 
@@ -29,18 +28,10 @@ public class Cliente {
         return id;
     }
 
-    // Método para obter a conexão com o banco de dados
-    private static Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/biblioteca";  // URL do banco de dados
-        String user = "root";  // Usuário do banco de dados
-        String password = "";  // Senha do banco de dados
-        return DriverManager.getConnection(url, user, password);
-    }
-
     // Lista os clientes cadastrados no banco de dados
     public static void listarClientes() {
         String query = "SELECT * FROM clientes";
-        try (Connection connection = getConnection();
+        try (Connection connection = Conexao.getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             
@@ -59,7 +50,7 @@ public class Cliente {
     // Cadastrar cliente no banco de dados
     public static void cadastrarCliente(String nome, String email) {
         String query = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
-        try (Connection connection = getConnection();
+        try (Connection connection = Conexao.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
@@ -73,7 +64,7 @@ public class Cliente {
     // Editar cliente no banco de dados
     public static void editarCliente(int id, String novoNome, String novoEmail) {
         String query = "UPDATE clientes SET nome = ?, email = ? WHERE id = ?";
-        try (Connection connection = getConnection();
+        try (Connection connection = Conexao.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, novoNome);
             stmt.setString(2, novoEmail);
@@ -92,7 +83,7 @@ public class Cliente {
     // Apagar cliente do banco de dados
     public static void apagarCliente(int id) {
         String query = "DELETE FROM clientes WHERE id = ?";
-        try (Connection connection = getConnection();
+        try (Connection connection = Conexao.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             int rowsDeleted = stmt.executeUpdate();

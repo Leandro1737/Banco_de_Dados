@@ -20,7 +20,7 @@ public class App {
             System.out.println("9. Cadastrar empréstimo");
             System.out.println("10. Listar empréstimos");
             System.out.println("11. Atualizar empréstimo");
-            System.out.println("12. Apagar empréstimo");
+            System.out.println("12. Devolver livro");
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
 
