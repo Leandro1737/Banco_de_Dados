@@ -2,6 +2,13 @@ package TrabalhoAndre;
 
 import java.sql.*;
 
+/**
+ * Classe responsável por representar e manipular dados de livros.
+ * Fornece métodos para listar, cadastrar, atualizar e apagar livros no banco de dados.
+ * Também permite a busca de livros por ID.
+ * 
+ * @author Leandro
+ */
 public class Livros {
 
     private int id;
@@ -9,7 +16,14 @@ public class Livros {
     private String autores;
     private String anoPublicacao;
 
-    // Construtor
+    /**
+     * Construtor para criar uma instância de Livros.
+     * 
+     * @param id             O ID do livro.
+     * @param titulo         O título do livro.
+     * @param autores        Os autores do livro.
+     * @param anoPublicacao  O ano de publicação do livro.
+     */
     public Livros(int id, String titulo, String autores, String anoPublicacao) {
         this.id = id;
         this.titulo = titulo;
@@ -34,7 +48,9 @@ public class Livros {
         return anoPublicacao;
     }
 
-    // Método estático para listar os livros
+    /**
+     * Lista todos os livros cadastrados no banco de dados.
+     */
     public static void listarLivros() {
         String query = "SELECT id, titulo, autores, ano_publicacao FROM livros";
         try (Connection connection = Conexao.getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
@@ -52,7 +68,11 @@ public class Livros {
         }
     }
 
-    // Método para cadastrar livro no banco de dados
+    /**
+     * Cadastra um novo livro no banco de dados.
+     * 
+     * @param livro O objeto Livros a ser cadastrado.
+     */
     public static void cadastrarLivro(Livros livro) {
         String query = "INSERT INTO livros (titulo, autores, ano_publicacao) VALUES (?, ?, ?)";
         try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -66,7 +86,14 @@ public class Livros {
         }
     }
 
-    // Método para atualizar livro no banco de dados
+    /**
+     * Atualiza os dados de um livro no banco de dados.
+     * 
+     * @param id            O ID do livro a ser atualizado.
+     * @param titulo        O novo título do livro.
+     * @param autores       Os novos autores do livro.
+     * @param anoPublicacao O novo ano de publicação do livro.
+     */
     public static void atualizarLivro(int id, String titulo, String autores, String anoPublicacao) {
         String query = "UPDATE livros SET titulo = ?, autores = ?, ano_publicacao = ? WHERE id = ?";
         try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -85,7 +112,11 @@ public class Livros {
         }
     }
 
-    // Método para apagar livro do banco de dados
+    /**
+     * Apaga um livro do banco de dados.
+     * 
+     * @param id O ID do livro a ser apagado.
+     */
     public static void apagarLivro(int id) {
         String query = "DELETE FROM livros WHERE id = ?";
         try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -101,6 +132,12 @@ public class Livros {
         }
     }
 
+    /**
+     * Busca um livro no banco de dados pelo seu ID.
+     * 
+     * @param livroId O ID do livro a ser buscado.
+     * @return Um objeto Livros com os dados do livro, ou null se não for encontrado.
+     */
     public static Livros buscarLivroPorId(int livroId) {
         String query = "SELECT * FROM livros WHERE id = ?";
         try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {

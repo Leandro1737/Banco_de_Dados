@@ -2,7 +2,24 @@ package TrabalhoAndre;
 
 import java.util.Scanner;
 
+/**
+ * Classe principal para o sistema de gerenciamento da biblioteca Permite
+ * cadastrar, listar, editar e apagar clientes e livros além de registrar
+ * emprestimos e efetuar devoluções
+ *
+ * @author Samuel
+ * @author Kaiky
+ * @author Leandro
+ * @author Giovana
+ */
 public class App {
+
+    /**
+     * Método Principal que efetua a execução do Sistema.
+     *
+     * @param args
+     * @throws Exception
+     */
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -18,7 +35,7 @@ public class App {
             System.out.println("6. Listar livros");
             System.out.println("7. Editar livro");
             System.out.println("8. Apagar livro");
-            System.out.println("9. Cadastrar empréstimo");
+            System.out.println("9. empréstimo");
             System.out.println("10. Listar empréstimos");
             System.out.println("11. Atualizar empréstimo");
             System.out.println("12. Devolver livro");
@@ -143,10 +160,10 @@ public class App {
                                 break;
                             }
 
-                            // Registrar a devolução
+                           
                             Emprestimo.registrarDevolucao(livros, cliente); // Chama o método de devolução
                         } catch (Exception e) {
-                            System.out.println("Erro ao registrar devolução: " + e.getMessage());
+                            System.out.println("Erro ao realizar devolução: " + e.getMessage());
                         }
                         break;
 

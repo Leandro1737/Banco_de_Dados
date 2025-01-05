@@ -2,37 +2,66 @@ package TrabalhoAndre;
 
 import java.sql.*;
 
-
+/**
+ * Classe responsável pelo gerenciamento de clientes.
+ * Permite cadastrar, listar, editar e apagar clientes no banco de dados.
+ * 
+ * @author Kaiky
+ */
 public class Cliente {
 
     private String nome;
     private String email;
     private int id;
 
-    // Construtor
+    /**
+     * Construtor da classe Cliente.
+     * 
+     * @param nome  Nome do cliente.
+     * @param email Email do cliente.
+     * @param id    ID do cliente.
+     */
     public Cliente(String nome, String email, int id) {
         this.nome = nome;
         this.email = email;
         this.id = id;
     }
 
-    // Métodos de acesso
+    /**
+     * Obtém o nome do cliente.
+     * 
+     * @return O nome do cliente.
+     */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * Obtém o email do cliente.
+     * 
+     * @return O email do cliente.
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Obtém o ID do cliente.
+     * 
+     * @return O ID do cliente.
+     */
     public int getId() {
         return id;
     }
 
-    // Lista os clientes cadastrados no banco de dados
+    /**
+     * Lista todos os clientes cadastrados no banco de dados.
+     */
     public static void listarClientes() {
         String query = "SELECT * FROM clientes";
-        try (Connection connection = Conexao.getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+        try (Connection connection = Conexao.getConnection(); 
+             Statement stmt = connection.createStatement(); 
+             ResultSet rs = stmt.executeQuery(query)) {
 
             System.out.println("Clientes cadastrados:");
             while (rs.next()) {
@@ -46,10 +75,16 @@ public class Cliente {
         }
     }
 
-    // Cadastrar cliente no banco de dados
+    /**
+     * Cadastra um novo cliente no banco de dados.
+     * 
+     * @param nome  Nome do cliente.
+     * @param email Email do cliente.
+     */
     public static void cadastrarCliente(String nome, String email) {
         String query = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
-        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = Conexao.getConnection(); 
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.executeUpdate();
@@ -59,10 +94,17 @@ public class Cliente {
         }
     }
 
-    // Editar cliente no banco de dados
+    /**
+     * Edita as informações de um cliente existente no banco de dados.
+     * 
+     * @param id        ID do cliente a ser editado.
+     * @param novoNome  Novo nome do cliente.
+     * @param novoEmail Novo email do cliente.
+     */
     public static void editarCliente(int id, String novoNome, String novoEmail) {
         String query = "UPDATE clientes SET nome = ?, email = ? WHERE id = ?";
-        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = Conexao.getConnection(); 
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, novoNome);
             stmt.setString(2, novoEmail);
             stmt.setInt(3, id);
@@ -77,10 +119,15 @@ public class Cliente {
         }
     }
 
-    // Apagar cliente do banco de dados
+    /**
+     * Apaga um cliente do banco de dados.
+     * 
+     * @param id ID do cliente a ser apagado.
+     */
     public static void apagarCliente(int id) {
         String query = "DELETE FROM clientes WHERE id = ?";
-        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = Conexao.getConnection(); 
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             int rowsDeleted = stmt.executeUpdate();
             if (rowsDeleted > 0) {
@@ -92,11 +139,17 @@ public class Cliente {
             System.out.println("Erro ao apagar cliente: " + e.getMessage());
         }
     }
-    // Método para buscar cliente por ID no banco
 
+    /**
+     * Busca um cliente pelo ID no banco de dados.
+     * 
+     * @param clienteId ID do cliente a ser buscado.
+     * @return O cliente encontrado ou null se não for encontrado.
+     */
     public static Cliente buscarClientePorId(int clienteId) {
         String query = "SELECT * FROM clientes WHERE id = ?";
-        try (Connection connection = Conexao.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = Conexao.getConnection(); 
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, clienteId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -109,5 +162,4 @@ public class Cliente {
         }
         return null;  // Retorna null se o cliente não for encontrado
     }
-
 }

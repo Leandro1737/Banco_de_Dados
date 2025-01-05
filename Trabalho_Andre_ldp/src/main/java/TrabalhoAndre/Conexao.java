@@ -4,6 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Classe responsável por gerenciar a conexão com o banco de dados.
+ * Fornece o método para obter uma conexão com o banco.
+ * 
+ * @author Samuel
+ */
 public class Conexao {
 
     // Parâmetros da conexão com o banco de dados
@@ -11,7 +17,12 @@ public class Conexao {
     private static final String USER = "root";
     private static final String PASSWORD = "123456789";
 
-    // Método para obter a conexão com o banco de dados
+    /**
+     * Obtém uma conexão com o banco de dados.
+     * 
+     * @return Um objeto Connection para a conexão com o banco de dados.
+     * @throws SQLException Se ocorrer um erro ao tentar conectar ao banco de dados.
+     */
     public static Connection getConnection() throws SQLException {
         Connection conn = null;
         try {
