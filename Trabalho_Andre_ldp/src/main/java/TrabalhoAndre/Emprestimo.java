@@ -2,7 +2,6 @@ package TrabalhoAndre;
 
 import java.sql.*;
 
-
 public class Emprestimo {
     private Livros livro;
     private Cliente cliente;
@@ -17,20 +16,16 @@ public class Emprestimo {
 
     // Método para cadastrar o empréstimo
     public static void cadastrarEmprestimo(Livros livro, Cliente cliente, String dataEmprestimo) {
-        if (livro.emprestarExemplar()) {
-            String query = "INSERT INTO emprestimos (cliente_id, livro_id, data_emprestimo) VALUES (?, ?, ?)";
-            try (Connection connection = Conexao.getConnection();
-                 PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, cliente.getId());
-                stmt.setInt(2, livro.getId());
-                stmt.setString(3, dataEmprestimo);
-                stmt.executeUpdate();
-                System.out.println("Empréstimo cadastrado com sucesso.");
-            } catch (SQLException e) {
-                System.out.println("Erro ao cadastrar empréstimo: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Não há exemplares disponíveis para empréstimo.");
+        String query = "INSERT INTO emprestimos (cliente_id, livro_id, data_emprestimo) VALUES (?, ?, ?)";
+        try (Connection connection = Conexao.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, cliente.getId());
+            stmt.setInt(2, livro.getId());
+            stmt.setString(3, dataEmprestimo);
+            stmt.executeUpdate();
+            System.out.println("Empréstimo cadastrado com sucesso.");
+        } catch (SQLException e) {
+            System.out.println("Erro ao cadastrar empréstimo: " + e.getMessage());
         }
     }
     
@@ -74,7 +69,6 @@ public class Emprestimo {
 
     // Método para registrar devolução
     public static void registrarDevolucao(Livros livro, Cliente cliente) {
-        livro.devolverExemplar();
         String query = "DELETE FROM emprestimos WHERE cliente_id = ? AND livro_id = ?";
         try (Connection connection = Conexao.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {

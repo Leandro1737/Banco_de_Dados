@@ -66,9 +66,7 @@ public class App {
                         String autoresLivro = scanner.nextLine();
                         System.out.print("Digite o ano de publicação: ");
                         String anoLivro = scanner.nextLine();
-                        System.out.print("Digite o número de exemplares: ");
-                        int numExemplares = scanner.nextInt();
-                        Livros livro = new Livros(0, tituloLivro, autoresLivro, anoLivro, numExemplares);
+                        Livros livro = new Livros(0, tituloLivro, autoresLivro, anoLivro);
                         Livros.cadastrarLivro(livro);
                         break;
 
@@ -86,9 +84,7 @@ public class App {
                         String novosAutoresLivro = scanner.nextLine();
                         System.out.print("Digite o novo ano de publicação: ");
                         String novoAnoLivro = scanner.nextLine();
-                        System.out.print("Digite o novo número de exemplares: ");
-                        int novoNumExemplares = scanner.nextInt();
-                        Livros.atualizarLivro(idLivroEdit, novoTituloLivro, novosAutoresLivro, novoAnoLivro, novoNumExemplares);
+                        Livros.atualizarLivro(idLivroEdit, novoTituloLivro, novosAutoresLivro, novoAnoLivro);
                         break;
 
                     case 8:
@@ -105,7 +101,7 @@ public class App {
                         scanner.nextLine(); // Consumir a nova linha
                         System.out.print("Digite a data do empréstimo (YYYY-MM-DD): ");
                         String dataEmprestimo = scanner.nextLine();
-                        Livros livroEmp = new Livros(idLivroEmp, "", "", "", 0); // Mock do livro com ID
+                        Livros livroEmp = new Livros(idLivroEmp, "", "", ""); // Mock do livro com ID
                         Cliente clienteEmp = new Cliente("", "", idClienteEmp); // Mock do cliente com ID
                         Emprestimo.cadastrarEmprestimo(livroEmp, clienteEmp, dataEmprestimo);
                         break;
