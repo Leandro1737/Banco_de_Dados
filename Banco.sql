@@ -15,8 +15,6 @@ CREATE TABLE IF NOT EXISTS livros (
     titulo VARCHAR(255) NOT NULL,
     autores VARCHAR(255) NOT NULL,
     ano_publicacao VARCHAR(4),
-    num_exemplares INT NOT NULL,
-    exemplares_disponiveis INT NOT NULL
 );
 
 
